@@ -1,10 +1,26 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
+import { fetchUserAttributes } from 'aws-amplify/auth';
 import { Container, Button, Row, Col, Form, Card, ButtonToolbar } from 'react-bootstrap';
 import { getLoans } from '../../api/loans';
 
 const Borrowings = () => {
-  const [laonsData, setLoans] = useState([]);
+  const [loansData, setLoans] = useState([]);
+  const [user, setUser] = useState({
+    email: '', 
+    email_verified: '', 
+    name: '', 
+    sub: ''
+  });
+
+  useEffect(() => {
+    const getUser = async () => {
+      let connectedUser = await fetchUserAttributes();
+      setUser(connectedUser);
+    }
+
+    getUser()
+  }, [])
 
   useEffect(() => {
     document.title = "BookHub - Prets";
@@ -49,7 +65,7 @@ const Borrowings = () => {
       <Row>
         <Col lg={{span: 8, offset: 2}} md={{span: 6, offset:3}}>
           {
-            laonsData.map((loan, index) => (
+            loansData.filter(el => el.borrower_email === user.email).map((loan, index) => (
               <Card className='mb-3' key={index}>
                 <Card.Body>
                   <Row>

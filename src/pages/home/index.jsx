@@ -1,5 +1,6 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { fetchUserAttributes } from 'aws-amplify/auth';
 import { 
   Container, 
   Row, 
@@ -15,11 +16,17 @@ import BookSummary from '../../components/BookSummary';
 
 const Accueil = () => {
   const [show, setShow] = useState(false);
+  const [user, setUser] = useState({
+    email: '', 
+    email_verified: '', 
+    name: '', 
+    sub: ''
+  });
   const [bookData, setBookData] = useState({
     title: "", 
     author: "", 
     isbn: "", 
-    owner_email: ""
+    owner_email: user.email
   });
 
   // Manage open/close state of the modal
@@ -54,8 +61,20 @@ const Accueil = () => {
     console.log(bookData)
   }
 
+  useEffect(() => {
+    const getUser = async () => {
+      let connectedUser = await fetchUserAttributes();
+      setUser(connectedUser);
+    }
+
+    getUser()
+  }, [])
+
   return (
     <Container>
+      <div className='text-center mb-3 bg-light p-2'>
+        <h1>Bienvenue, {user.name}</h1>
+      </div>
       <Row>
         <Col lg={{span: 8, offset: 2}} md={{span: 6, offset:3}}>
           <Accordion defaultActiveKey="0" className='mb-3'>

@@ -17,10 +17,10 @@ const BookCard = ({ book }) => {
                 Statut: {book.status}
                 </Card.Text>
                 <ButtonToolbar className="justify-content-between">
-                    <ButtonGroup>
-                        <Card.Link href="#">Card Link</Card.Link>
-                        <Card.Link href="#">Another Link</Card.Link>
-                    </ButtonGroup>
+                    <div>
+                        <Button variant="link">Link</Button>
+                        <Button variant="info">Preter</Button>
+                    </div>
                     <Button variant="danger">Supprimer</Button>
                 </ButtonToolbar>
             </Col>
