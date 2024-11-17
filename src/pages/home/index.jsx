@@ -8,10 +8,11 @@ import {
   Col,
   Button,
   ButtonToolbar,
-Modal,
-Form
+  Modal
 } from 'react-bootstrap';
 import BookSummary from '../../components/BookSummary';
+import AddBookForm from '../../components/AddBookForm';
+import url from '../../utils/url';
 // import { postBook } from '../../api/book';
 
 const Accueil = () => {
@@ -22,44 +23,10 @@ const Accueil = () => {
     name: '', 
     sub: ''
   });
-  const [bookData, setBookData] = useState({
-    title: "", 
-    author: "", 
-    isbn: "", 
-    owner_email: user.email
-  });
-
+  
   // Manage open/close state of the modal
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
-  // Submit the form
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      console.log(bookData)
-      // const res = await postBook(bookData);
-      // const { data } = res;
-      // console.log(data);
-      setShow(false);
-      setBookData({
-        title: "", 
-        author: "", 
-        isbn: "", 
-        owner_email: ""
-      })
-      console.log('Formulaire envoyé');
-    } catch (error) {
-        console.error('Error adding book:', error);
-    }
-  }
-
-  // Handle change of inputs
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setBookData({ ...bookData, [name]: value });
-    console.log(bookData)
-  }
 
   useEffect(() => {
     const getUser = async () => {
@@ -142,45 +109,7 @@ const Accueil = () => {
           <Modal.Title>Formulaire d'ajout de livre</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form onSubmit={handleSubmit}>
-            <Form.Group className="mb-3" controlId="title">
-              <Form.Label>Titre</Form.Label>
-              <Form.Control 
-                name="title" 
-                onChange={e => handleChange(e)}
-                value={bookData.title} 
-                type="text" 
-                placeholder="Entrer le titre du livre" 
-              />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="author">
-              <Form.Label>Auteur(s)</Form.Label>
-              <Form.Control 
-                name='author' 
-                onChange={e => handleChange(e)}
-                value={bookData.author} 
-                type="text" 
-                placeholder="Entrer le(s) nom(s) de l'(des) auteur(s)" 
-              />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="isbn">
-              <Form.Label>ISBN</Form.Label>
-              <Form.Control 
-                name='isbn' 
-                value={bookData.isbn} 
-                onChange={e => handleChange(e)}
-                type="text" 
-                placeholder="Entrer l'ISBN du livre" 
-              />
-            </Form.Group>
-            <Form.Group controlId="imageFile" className="mb-3">
-            <Form.Label>Image de la page de couverture</Form.Label>
-              <Form.Control type="file" />
-            </Form.Group>
-            <Button variant="success" type="submit">
-              Soumettre
-            </Button>
-          </Form>
+          <AddBookForm userEmail={user.email} />
         </Modal.Body>
         <Modal.Footer>
           <Button variant="danger" onClick={handleClose}>

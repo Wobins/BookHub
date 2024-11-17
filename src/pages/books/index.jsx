@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { fetchUserAttributes } from 'aws-amplify/auth';
-import { Container, Button, Row, Col, Form } from 'react-bootstrap';
+import { Container, Button, Row, Col, Form, Tab, Tabs } from 'react-bootstrap';
 import BookCards from '../../components/BookCards';
 import { getBooks } from '../../api/book';
 
@@ -65,7 +65,19 @@ const Bibliotheque = () => {
 
       <Row>
         <Col lg={{span: 8, offset: 2}} md={{span: 6, offset:3}}>
-          <BookCards books={booksData.filter(el => el.owner_email === user.email)} />
+          <Tabs
+            defaultActiveKey="myBooks"
+            id="uncontrolled-tab-example"
+            className="mb-3"
+            justify
+          >
+            <Tab eventKey="myBooks" title="Mes livres">
+              <BookCards books={booksData.filter(el => el.owner_email === user.email)} />
+            </Tab>
+            <Tab eventKey="allBooks" title="Tous les livres">
+              <BookCards books={booksData} />
+            </Tab>
+          </Tabs>
         </Col>
       </Row>
     </Container>
