@@ -3,7 +3,12 @@ import url from "../../utils/url";
 
 
 export function getBooks () {
-    return axios.get(`${url}/books`);
+    return axios.get(`${url}/books`,{
+        headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        }
+    });
 }
 
 export function getBook (id) {

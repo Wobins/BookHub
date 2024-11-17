@@ -11,7 +11,7 @@ Modal,
 Form
 } from 'react-bootstrap';
 import BookSummary from '../../components/BookSummary';
-import { postBook } from '../../api/book';
+// import { postBook } from '../../api/book';
 
 const Accueil = () => {
   const [show, setShow] = useState(false);
