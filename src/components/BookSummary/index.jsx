@@ -1,14 +1,14 @@
 import React from 'react';
 import { Accordion } from 'react-bootstrap';
 
-const BookSummary = () => {
+const BookSummary = ({ book }) => {
   return (
     <>
-        <Accordion.Body>
-            <h5>Titre</h5>
-            <p>Auteur</p>
-            <hr/>
-        </Accordion.Body>
+      <Accordion.Body>
+        <h5>{book.title}</h5>
+        <p>Auteur(s): {book.author}</p>
+        <hr/>
+      </Accordion.Body>
     </>
   );
 }

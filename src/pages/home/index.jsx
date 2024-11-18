@@ -12,10 +12,13 @@ import {
 } from 'react-bootstrap';
 import BookSummary from '../../components/BookSummary';
 import AddBookForm from '../../components/AddBookForm';
-import url from '../../utils/url';
-// import { postBook } from '../../api/book';
+import { getBooks } from '../../api/book';
+import { getLoans } from '../../api/loans';
 
 const Accueil = () => {
+  const [booksData, setBooks] = useState([]);
+  const [loansData, setLoans] = useState([]);
+  const [borrowings, setBorrowings] = useState([]);
   const [show, setShow] = useState(false);
   const [user, setUser] = useState({
     email: '', 
@@ -28,14 +31,50 @@ const Accueil = () => {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  // Fetch all books
+  const fetchBooks = async () => {
+    const res = await getBooks();
+    const data = res.data.body;
+    return data;
+  }
+  
+  // Fetch all loans
+  const fetchLoans = async () => {
+    const res = await getLoans();
+    const data = res.data.body;
+    return data;
+  }
+  
   useEffect(() => {
+    document.title = "BookHub - Accueil";   
+    
     const getUser = async () => {
       let connectedUser = await fetchUserAttributes();
       setUser(connectedUser);
     }
-
-    getUser()
+    
+    getUser();
+    
   }, [])
+  
+  useEffect(() => {
+    const getAllBooks = async () => {
+      const booksFromAPI = await fetchBooks();
+      const booksFilter = booksFromAPI.filter(el => el.owner_email === user.email)
+      setBooks(booksFilter);
+    }
+    
+    const getAllLoans = async () => {
+      const loansFromAPI = await fetchLoans();
+      const loansFilter = loansFromAPI.filter(el => el.owner_email === user.email);
+      const borrowingsFilter = loansFromAPI.filter(el => el.borrower_email === user.email);
+      setLoans(loansFilter);
+      setBorrowings(borrowingsFilter);
+    }
+    
+    getAllBooks();
+    getAllLoans();
+  }, [user])
 
   return (
     <Container>
@@ -47,7 +86,9 @@ const Accueil = () => {
           <Accordion defaultActiveKey="0" className='mb-3'>
             <Accordion.Item eventKey="0" className=''>
               <Accordion.Header>Livres</Accordion.Header>
-              <BookSummary />              
+                {
+                  booksData.slice(0, 3).map((book, index) => <BookSummary key={index} book={book} />)
+                }            
               <Accordion.Body>
                 <ButtonToolbar className="justify-content-between">
                   <Button variant="primary" onClick={handleShow}>
@@ -65,15 +106,21 @@ const Accueil = () => {
           <Accordion defaultActiveKey="0" className='mb-3'>
             <Accordion.Item eventKey="0" className=''>
               <Accordion.Header>Prets</Accordion.Header>
-              <Accordion.Body>
-                <h5>Titre</h5>
-                <p>Auteur</p>
-                <p>destinataire</p>
-                <hr/>
-              </Accordion.Body>
+              {
+                loansData.slice(0, 3).map((loan, index) => (     
+                  booksData.filter(el => el.id === loan.book_id).map((book, index) => (
+                    <Accordion.Body key={index}>
+                      <h5>{book.title}</h5>
+                      <p>Auteurs(s): {book.author}</p>
+                      <p>Email du bénéficiaire: {loan.borrower_email}</p>
+                      <hr/>
+                    </Accordion.Body>
+                  ))
+                ))
+              }
               <Accordion.Body>
                 <ButtonToolbar className="justify-content-end">
-                  <Button variant="link" href="books">Voir plus</Button>
+                  <Button variant="link" href="loans">Voir plus</Button>
                 </ButtonToolbar>
               </Accordion.Body>
             </Accordion.Item>
@@ -85,15 +132,21 @@ const Accueil = () => {
           <Accordion defaultActiveKey="0" className='mb-3'>
             <Accordion.Item eventKey="0" className=''>
               <Accordion.Header>Emprunts</Accordion.Header>
-              <Accordion.Body>
-                <h5>Titre</h5>
-                <p>Auteur</p>
-                <p>source</p>
-                <hr/>
-              </Accordion.Body>
+              {
+                borrowings.slice(0, 3).map((loan, index) => (     
+                  booksData.filter(el => el.id === loan.book_id).map((book, index) => (
+                    <Accordion.Body key={index}>
+                      <h5>{book.title}</h5>
+                      <p>Auteurs(s): {book.author}</p>
+                      <p>Email du donateur: {loan.owner_email}</p>
+                      <hr/>
+                    </Accordion.Body>
+                  ))
+                ))
+              }
               <Accordion.Body>
                 <ButtonToolbar className="justify-content-end">
-                  <Button variant="link" href="books">Voir plus</Button>
+                  <Button variant="link" href="borrowings">Voir plus</Button>
                 </ButtonToolbar>
               </Accordion.Body>
             </Accordion.Item>

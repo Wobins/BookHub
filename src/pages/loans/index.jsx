@@ -3,9 +3,12 @@ import { useState, useEffect } from 'react';
 import { fetchUserAttributes } from 'aws-amplify/auth';
 import { Container, Button, Row, Col, Form, Card, ButtonToolbar } from 'react-bootstrap';
 import { getLoans } from '../../api/loans';
+import { getBooks } from '../../api/book';
 
 const Prets = () => {
-  const [laonsData, setLoans] = useState([]);
+  const [loansData, setLoans] = useState([]);
+  const [booksData, setBooks] = useState([]);
+  const [search, setSearch] = useState('');
   const [user, setUser] = useState({
     email: '', 
     email_verified: '', 
@@ -13,7 +16,29 @@ const Prets = () => {
     sub: ''
   });
 
+  // Search
+  const handleSearch = (e) => {
+    setSearch(e.target.value);
+  }
+
+  // Fetch all books
+  const fetchBooks = async () => {
+    const res = await getBooks();
+    const data = res.data.body;
+    return data;
+  }
+
+  // Fetch all books
+  const fetchLoans = async () => {
+    const res = await getLoans();
+    const data = res.data.body;
+    console.log(data);
+    return data;
+  }
+
   useEffect(() => {
+    document.title = "BookHub - Prets";
+
     const getUser = async () => {
       let connectedUser = await fetchUserAttributes();
       setUser(connectedUser);
@@ -23,23 +48,39 @@ const Prets = () => {
   }, [])
 
   useEffect(() => {
-    document.title = "BookHub - Prets";
-    
+    const getAllBooks = async () => {
+      const booksFromAPI = await fetchBooks();
+      const booksFilter = booksFromAPI.filter(el => el.owner_email === user.email)
+      setBooks(booksFilter);
+    }
+
     const getAllLoans = async () => {
       const loansFromAPI = await fetchLoans();
-      setLoans(loansFromAPI);
+      const loansFilter = loansFromAPI.filter(el => el.owner_email === user.email);
+      setLoans(loansFilter);
     }
-  
+    
+    getAllBooks();
     getAllLoans();
-  }, []);
+  }, [user, search]);
 
-  // Fetch all books
-  const fetchLoans = async () => {
-    const res = await getLoans();
-    const data = res.data.body;
-    console.log(data);
-    return data;
-  }
+  useEffect(() => {
+    const getSearch = async () => {
+      const booksFromAPI = await fetchBooks();
+      const loansFromAPI = await fetchLoans();
+
+      const booksFilter = booksFromAPI.filter(el => el.owner_email === user.email);
+      const loansFilter = loansFromAPI.filter(el => el.owner_email === user.email);
+
+      const booksSearch = booksFilter.filter(el => el.title.toLowerCase().includes(search.toLowerCase()) || el.author.toLowerCase().includes(search.toLowerCase()) || el.isbn.toLowerCase().includes(search.toLowerCase()));
+      // const loansSearch = loansFilter.filter(el => el.borrower_email.toLowerCase().includes(search.toLowerCase()));
+
+      setBooks(booksSearch);
+      // setLoans(loansSearch);
+    }
+
+    getSearch();
+  }, [search])
 
   return (
     <Container>
@@ -50,8 +91,10 @@ const Prets = () => {
               <Col>
                 <Form.Control
                   type="text"
+                  name='search'
                   placeholder="Entrer le nom du livre, auteur, etc."
                   className=" mr-sm-2"
+                  onChange={handleSearch}
                 />
               </Col>
               <Col xs="auto">
@@ -65,29 +108,36 @@ const Prets = () => {
       <Row>
         <Col lg={{span: 8, offset: 2}} md={{span: 6, offset:3}}>
           {
-            laonsData.filter(el => el.owner_email === user.email).map((loan, index) => (
-              <Card className='mb-3' key={index}>
-                <Card.Body>
-                  <Row>
-                    <Col lg={{span: 4}} md={{span: 6}}>
-                        <div>image</div>
-                    </Col>
-                    <Col lg={{span: 8}}>
-                        <Card.Title>{}</Card.Title>
-                        <Card.Subtitle className="mb-2 text-muted">Auteur(s): {}</Card.Subtitle>
-                        <Card.Subtitle className="mb-2 text-muted">ISBN: {}</Card.Subtitle>
-                        <Card.Subtitle className="mb-2 text-muted">Prete à: {loan.borrower_email}</Card.Subtitle>
-                        <Card.Subtitle className="mb-2 text-muted">Date de retour: {loan.returned_at}</Card.Subtitle>
-                        <Card.Text>
-                        Statut: {}
-                        </Card.Text>
+            loansData.map((loan, index) => (     
+              booksData.filter(el => el.id === loan.book_id).map((book, index) => (
+                <Card className='mb-3' key={index}>
+                  <Card.Body>
+                    <Row>
+                      <Col lg={{span: 4}} md={{span: 6}}>
+                          <div>image</div>
+                      </Col>
+                      <Col lg={{span: 8}}>
+                        <Card.Title>{book.title}</Card.Title>
+                        <Card.Subtitle className="mb-2 text-muted">
+                          Auteur(s): {book.author}
+                        </Card.Subtitle>
+                        <Card.Subtitle className="mb-2 text-muted">
+                          ISBN: {book.isbn}
+                        </Card.Subtitle>
+                        <Card.Subtitle className="mb-2 text-muted">
+                          Bénéficiaire: {loan.borrower_email}
+                        </Card.Subtitle>
+                        <Card.Subtitle className="mb-2 text-muted">
+                          Date de retour: {loan.returned_at}
+                        </Card.Subtitle>
                         <ButtonToolbar className="justify-content-end">
                           <Button variant="success">Recuperer</Button>
                         </ButtonToolbar>
-                    </Col>
-                  </Row>
-                </Card.Body>
-              </Card>             
+                      </Col>
+                    </Row>
+                  </Card.Body>
+                </Card>             
+              ))
             ))
           }
         </Col>

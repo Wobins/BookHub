@@ -14,10 +14,6 @@ import Borrowings from './pages/borrowings';
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <div>Hello world!</div>,
-  },
-  {
-    path: "/home",
     element: <DefaultLayout children={<Accueil />} />,
   },
   {
