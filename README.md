@@ -68,19 +68,20 @@ L'application repose sur une architecture en microservices déployée sur **AWS 
 ## Démarrage rapide
 
 ### Option 1 : Cloner le repository
-```bash
+
 git clone https://github.com/username/book-lending.git
 cd book-lending
 
 
-Option 2 : Télécharger et décompresser
+### Option 2 : Télécharger et décompresser
 Téléchargez le projet en fichier ZIP.
 Décompressez le fichier sur votre machine locale.
 Configuration
 Installez les dépendances avec npm install (service front-end).
 Configurez les ressources AWS pour les services backend.
 Structure des données
-Table Books (RDS)
+
+## Table Books (RDS)
 id	title	author	isbn	owner_email	image_url	status	created_at	updated_at
 2	To Kill a Mockingbird	Harper Lee	9780061120084	angleazaly@hotmail.com	https://s3.amazonaws.com/.../mockingbird.jpg	disponible	2024-11-15T06:10:48Z	2024-11-17T06:42:03Z
 Table Loans (DynamoDB)
@@ -166,20 +167,13 @@ exports.handler = async (event) => {
         };
     }
 };
-Déploiement
-Étapes de déploiement
-Déployer les fonctions Lambda :
 
-Node.js pour le service des livres.
-Python pour le service des prêts.
-Configurer API Gateway :
+## Déploiement
 
-Configurez /books et /loans comme entrées des microservices.
-Connecter les bases de données :
+Déployer le front-end : npm install puis, npm start
 
-RDS : Configurez une table Books.
-DynamoDB : Configurez une table Loans.
-Déployer le front-end :
+## Architecture
+
 
 
 
