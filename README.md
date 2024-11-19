@@ -2,6 +2,12 @@
 
 Ce projet illustre la mise en œuvre d'une architecture basée sur des microservices pour une application de gestion de prêts de livres. Cette application met en avant la flexibilité des microservices grâce à l'utilisation de deux technologies distinctes : **Node.js** et **Python**, ainsi que deux bases de données différentes : **Amazon RDS** et **DynamoDB**.
 
+---
+
+## Lien du projet
+
+[Visitez le projet BookHub](https://main.dql2rg0m0rbjz.amplifyapp.com/)
+
 ## Auteurs
 1. Ange Wobinwo
 2. Malcom Bergot
@@ -85,7 +91,7 @@ id	title	author	isbn	owner_email	image_url	status	created_at	updated_at
 2	To Kill a Mockingbird	Harper Lee	9780061120084	angleazaly@hotmail.com	https://s3.amazonaws.com/.../mockingbird.jpg	disponible	2024-11-15T06:10:48Z	2024-11-17T06:42:03Z
 Table Loans (DynamoDB)
 json
-Copy code
+
 ```
 {
   "id": "418d5255-8852-41e8-8ee4-023183ec88bc",
@@ -100,8 +106,9 @@ Copy code
 }
 ```
 
-Exemples de code
-Ajouter un prêt (Python - Service des prêts)
+## Exemples de code
+
+### Ajouter un prêt (Python - Service des prêts)
 python
 Copy code
 ```
@@ -130,9 +137,12 @@ def lambda_handler(event, context):
         'statusCode': 200,
         'body': json.dumps({'message': 'Loan created successfully'})
     }
-Mettre à jour un livre (Node.js - Service des livres)
+```
+
+### Mettre à jour un livre (Node.js - Service des livres)
 javascript
-Copy code
+
+```
 const AWS = require('aws-sdk');
 const RDS = new AWS.RDSDataService();
 
@@ -174,11 +184,14 @@ exports.handler = async (event) => {
 
 ## Déploiement
 
-Déployer le front-end : npm install puis, npm start
+Déployer le front-end : 
+    - Verifier que vous avez Node.js installé d'abord
+    - npm install (installer les dependances)
+    - npm start (exécuter le projet)
 
 ## Architecture
 
-
+![Architecture](tp2-q3-architecture.png)
 
 
 
