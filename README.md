@@ -53,7 +53,6 @@ L'application repose sur une architecture en microservices déployée sur **AWS 
 - **Fonctionnalités** :
   - Ajout de livres.
   - Récupération de la liste des livres.
-  - Mise à jour des informations des livres.
 
 ### Service des prêts
 - **API Endpoint** : `https://wp4dxp6doc.execute-api.us-east-1.amazonaws.com/dev/loans`
@@ -87,6 +86,7 @@ id	title	author	isbn	owner_email	image_url	status	created_at	updated_at
 Table Loans (DynamoDB)
 json
 Copy code
+```
 {
   "id": "418d5255-8852-41e8-8ee4-023183ec88bc",
   "book_id": 37,
@@ -98,10 +98,13 @@ Copy code
   "returned_at": "",
   "status": "Not returned"
 }
+```
+
 Exemples de code
 Ajouter un prêt (Python - Service des prêts)
 python
 Copy code
+```
 import boto3
 import json
 import uuid
@@ -167,6 +170,7 @@ exports.handler = async (event) => {
         };
     }
 };
+```
 
 ## Déploiement
 
