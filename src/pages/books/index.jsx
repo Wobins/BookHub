@@ -4,7 +4,6 @@ import { fetchUserAttributes } from 'aws-amplify/auth';
 import { Container, Button, Row, Col, Form, Tab, Tabs } from 'react-bootstrap';
 import BookCards from '../../components/BookCards';
 import { getBooks } from '../../api/book';
-// import { Handler } from 'aws-cdk-lib/aws-lambda';
 
 const Bibliotheque = () => {
   const [booksData, setBooks] = useState([]);
@@ -80,12 +79,14 @@ const Bibliotheque = () => {
               <BookCards 
                 showOptions={true}
                 books={booksData.filter(el => el.owner_email === user.email)} 
+                user={user}
               />
             </Tab>
             <Tab eventKey="allBooks" title="Autres livres">
               <BookCards 
                 showOptions={false}
                 books={booksData.filter(el => el.owner_email !== user.email)} 
+                user={user}
               />
             </Tab>
           </Tabs>

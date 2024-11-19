@@ -4,6 +4,7 @@ import { fetchUserAttributes } from 'aws-amplify/auth';
 import { Container, Button, Row, Col, Form, Card, ButtonToolbar } from 'react-bootstrap';
 import { getLoans } from '../../api/loans';
 import { getBooks } from '../../api/book';
+import bookCover from '../../assets/book-cover.png';
 
 const Prets = () => {
   const [loansData, setLoans] = useState([]);
@@ -15,6 +16,10 @@ const Prets = () => {
     name: '', 
     sub: ''
   });
+
+  const today1 = new Date();
+  // today.setHours(0, 0, 0, 0);
+  const today = today1.toISOString().split('T')[0]
 
   // Search
   const handleSearch = (e) => {
@@ -97,9 +102,6 @@ const Prets = () => {
                   onChange={handleSearch}
                 />
               </Col>
-              <Col xs="auto">
-                <Button type="submit">Rechercher</Button>
-              </Col>
             </Row>
           </Form>
         </Col>
@@ -110,11 +112,11 @@ const Prets = () => {
           {
             loansData.map((loan, index) => (     
               booksData.filter(el => el.id === loan.book_id).map((book, index) => (
-                <Card className='mb-3' key={index}>
+                <Card className={`mb-3 ${loan.returned_at > today ? 'border border-4 border-success' : 'border border-4 border-danger'}`} key={index}>
                   <Card.Body>
                     <Row>
                       <Col lg={{span: 4}} md={{span: 6}}>
-                          <div>image</div>
+                        <img src={bookCover} alt="book cover" className='img-fluid' />
                       </Col>
                       <Col lg={{span: 8}}>
                         <Card.Title>{book.title}</Card.Title>
@@ -129,7 +131,7 @@ const Prets = () => {
                         </Card.Subtitle>
                         <Card.Subtitle className="mb-2 text-muted">
                           Date de retour: {loan.returned_at}
-                        </Card.Subtitle>
+                        </Card.Subtitle>                       
                         <ButtonToolbar className="justify-content-end">
                           <Button variant="success">Recuperer</Button>
                         </ButtonToolbar>

@@ -2,6 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import url from '../../utils/url';
+import { postBook } from '../../api/book';
 
 const AddBookForm = ({ userEmail }) => {    
   const [bookData, setBookData] = useState({
@@ -9,7 +10,7 @@ const AddBookForm = ({ userEmail }) => {
     author: "", 
     isbn: "", 
     status: "disponible", 
-    image_base64: "",
+    image_url: "sample",
     owner_email: userEmail
   });
 
@@ -23,35 +24,22 @@ const AddBookForm = ({ userEmail }) => {
         isbn: bookData.isbn,
         status: bookData.status,
         owner_email: userEmail,
-        image_base64: bookData.image_base64
+        image_url: bookData.image_url
       };
   
-      // Call your API endpoint that triggers the Lambda
-      const response = await fetch(`${url}/books`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(bookPayload)
+      console.log(bookPayload)
+      const res = await postBook(bookPayload);
+      console.log(res);
+
+      setBookData({
+        title: "", 
+        author: "", 
+        isbn: "", 
+        status: "disponible", 
+        owner_email: userEmail,
+        image_url: "aws.amazon.com"
       });
-  
-      const data = await response.json();
-      
-      if (response.ok) {
-        // setShow(false);
-        setBookData({
-          title: "", 
-          author: "", 
-          isbn: "", 
-          status: "disponible", 
-          owner_email: userEmail,
-          image_base64: ""
-        });
-        // Add success message or refresh book list
-        console.log(data);
-      } else {
-        throw new Error(data.message || 'Error adding book');
-      }
+
     } catch (error) {
       console.error('Error adding book:', error);
     }
@@ -61,7 +49,7 @@ const AddBookForm = ({ userEmail }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setBookData({ ...bookData, [name]: value });
-    console.log(e)
+    // console.log(e)
   }
 
   return (
@@ -96,7 +84,7 @@ const AddBookForm = ({ userEmail }) => {
           placeholder="Entrer l'ISBN du livre" 
           />
       </Form.Group>
-      <Form.Group controlId="imageFile" className="mb-3">
+      {/* <Form.Group controlId="imageFile" className="mb-3">
       <Form.Label>Image de la page de couverture</Form.Label>
           <Form.Control
               type="file" 
@@ -104,7 +92,7 @@ const AddBookForm = ({ userEmail }) => {
               accept="image/*"
               onChange={handleChange}
           />
-      </Form.Group>
+      </Form.Group> */}
       <Button variant="success" type="submit">
           Soumettre
       </Button>
