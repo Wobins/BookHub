@@ -27,6 +27,7 @@ const Bibliotheque = () => {
     return data;
   }
 
+  // Get User
   useEffect(() => {
     document.title = "BookHub - Livres";
 
@@ -38,6 +39,7 @@ const Bibliotheque = () => {
     getUser()
   }, [])
 
+  // Get books
   useEffect(() => {    
     const getAllBooks = async () => {
       const booksFromAPI = await fetchBooks();
@@ -46,6 +48,21 @@ const Bibliotheque = () => {
   
     getAllBooks();
   }, []);
+
+  // Filter by search
+  useEffect(() => {
+    const getSearch = async () => {
+      const booksFromAPI = await fetchBooks();
+
+      const booksFilter = booksFromAPI.filter(el => el.owner_email === user.email);
+
+      const booksSearch = booksFilter.filter(el => el.title.toLowerCase().includes(search.toLowerCase()) || el.author.toLowerCase().includes(search.toLowerCase()) || el.isbn.toLowerCase().includes(search.toLowerCase()));
+
+      setBooks(booksSearch);
+    }
+
+    getSearch();
+  }, [search])
 
   return (
     <Container>

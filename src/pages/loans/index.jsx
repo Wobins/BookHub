@@ -1,8 +1,8 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { fetchUserAttributes } from 'aws-amplify/auth';
-import { Container, Button, Row, Col, Form, Card, ButtonToolbar } from 'react-bootstrap';
-import { getLoans } from '../../api/loans';
+import { Container, Button, Row, Col, Form, Card, ButtonToolbar, Modal } from 'react-bootstrap';
+import { getLoans, updateLoan } from '../../api/loans';
 import { getBooks } from '../../api/book';
 import bookCover from '../../assets/book-cover.png';
 
@@ -16,10 +16,42 @@ const Prets = () => {
     name: '', 
     sub: ''
   });
+  const [show, setShow] = useState(false);
+  const [loan, setLoan] = useState({
+    id: "96cc000c-0b15-46e1-9b51-86d31c4be170",
+    // book_id: 1,
+    // borrower_email: "malcom@mail.com",
+    // created_at: "2024-11-19T13:44:33.757396",
+    // owner_email: "angleazaly@hotmail.com",
+    // returned_at: "2024-09-23",
+    // status: "en cours de pret",
+    // updated_at: "2024-11-19T13:44:33.757414"
+   });
 
   const today1 = new Date();
-  // today.setHours(0, 0, 0, 0);
   const today = today1.toISOString().split('T')[0]
+  
+  const handleClose = () => {
+    setShow(false);
+    setLoan({
+      id: ""
+    });
+  }
+  const handleShow = () => setShow(true);
+
+  const handleConfirm = async(loan) => {
+    try{
+      const res = await updateLoan(loan.id, loan);
+      handleClose();
+    } catch(e) {
+      console.log(e);
+    }
+  }
+
+  const handleClick = (loan) => {
+    setLoan(loan);
+    handleShow();
+  }
 
   // Search
   const handleSearch = (e) => {
@@ -37,7 +69,6 @@ const Prets = () => {
   const fetchLoans = async () => {
     const res = await getLoans();
     const data = res.data.body;
-    console.log(data);
     return data;
   }
 
@@ -78,10 +109,8 @@ const Prets = () => {
       const loansFilter = loansFromAPI.filter(el => el.owner_email === user.email);
 
       const booksSearch = booksFilter.filter(el => el.title.toLowerCase().includes(search.toLowerCase()) || el.author.toLowerCase().includes(search.toLowerCase()) || el.isbn.toLowerCase().includes(search.toLowerCase()));
-      // const loansSearch = loansFilter.filter(el => el.borrower_email.toLowerCase().includes(search.toLowerCase()));
 
       setBooks(booksSearch);
-      // setLoans(loansSearch);
     }
 
     getSearch();
@@ -112,7 +141,7 @@ const Prets = () => {
           {
             loansData.map((loan, index) => (     
               booksData.filter(el => el.id === loan.book_id).map((book, index) => (
-                <Card className={`mb-3 ${loan.returned_at > today ? 'border border-4 border-success' : 'border border-4 border-danger'}`} key={index}>
+                <Card className={`mb-3 ${loan.returned_date > today ? 'border border-4 border-success' : 'border border-4 border-danger'}`} key={index}>
                   <Card.Body>
                     <Row>
                       <Col lg={{span: 4}} md={{span: 6}}>
@@ -130,10 +159,12 @@ const Prets = () => {
                           Bénéficiaire: {loan.borrower_email}
                         </Card.Subtitle>
                         <Card.Subtitle className="mb-2 text-muted">
-                          Date de retour: {loan.returned_at}
+                          Date de retour: {loan.returned_date}
                         </Card.Subtitle>                       
                         <ButtonToolbar className="justify-content-end">
-                          <Button variant="success">Recuperer</Button>
+                          <Button variant="success" onClick={loan =>  handleClick(loan)}>
+                            Retourner
+                          </Button>
                         </ButtonToolbar>
                       </Col>
                     </Row>
@@ -144,6 +175,23 @@ const Prets = () => {
           }
         </Col>
       </Row>
+
+
+      <Modal
+        show={show}
+        onHide={handleClose}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton>
+        </Modal.Header>
+        <Modal.Body>
+          Confirmez-vous que ce livre a été retourné ? 
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" onClick={handleConfirm}>Oui</Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 }

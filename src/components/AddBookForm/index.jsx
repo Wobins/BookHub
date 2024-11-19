@@ -9,7 +9,7 @@ const AddBookForm = ({ userEmail }) => {
     title: "", 
     author: "", 
     isbn: "", 
-    status: "disponible", 
+    status: "Available", 
     image_url: "sample",
     owner_email: userEmail
   });
@@ -35,7 +35,7 @@ const AddBookForm = ({ userEmail }) => {
         title: "", 
         author: "", 
         isbn: "", 
-        status: "disponible", 
+        status: "Available", 
         owner_email: userEmail,
         image_url: "aws.amazon.com"
       });
@@ -57,11 +57,11 @@ const AddBookForm = ({ userEmail }) => {
       <Form.Group className="mb-3" controlId="title">
           <Form.Label>Titre</Form.Label>
           <Form.Control 
-          name="title" 
-          onChange={e => handleChange(e)}
-          value={bookData.title} 
-          type="text" 
-          placeholder="Entrer le titre du livre" 
+            name="title" 
+            onChange={e => handleChange(e)}
+            value={bookData.title} 
+            type="text" 
+            placeholder="Entrer le titre du livre" 
           />
       </Form.Group>
       <Form.Group className="mb-3" controlId="author">

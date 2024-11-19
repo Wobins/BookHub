@@ -79,7 +79,7 @@ const Accueil = () => {
   return (
     <Container>
       <div className='text-center mb-3 bg-light p-2'>
-        <h1>Bienvenue, {user.name}</h1>
+        <h1 className='h1'>Bienvenue, {user.name}</h1>
       </div>
       <Row>
         <Col lg={{span: 8, offset: 2}} md={{span: 6, offset:3}}>

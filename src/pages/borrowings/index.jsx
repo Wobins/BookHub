@@ -18,7 +18,6 @@ const Borrowings = () => {
   });
 
   const today1 = new Date();
-  // today.setHours(0, 0, 0, 0);
   const today = today1.toISOString().split('T')[0]
 
   // Search
@@ -111,7 +110,7 @@ const Borrowings = () => {
           {
             loansData.map((loan, index) => (     
               booksData.filter(el => el.id === loan.book_id).map((book, index) => (
-                <Card className={`mb-3 ${loan.returned_at < today ? 'border border-4 border-success' : 'border border-4 border-danger'}`} key={index}>
+                <Card className={`mb-3 ${loan.returned_at > today ? 'border border-4 border-success' : 'border border-4 border-danger'}`} key={index}>
                   <Card.Body>
                     <Row>
                       <Col lg={{span: 4}} md={{span: 6}}>

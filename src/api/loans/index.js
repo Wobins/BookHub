@@ -15,6 +15,15 @@ export function getLoan (id) {
     });
 }
 
+export function updateLoan (id, loan) {
+    return axios.patch(`${url}/loans/${id}`, loan, {
+        headers: {
+            "Content-Type": "application/json",
+            'Access-Control-Allow-Origin': '*'
+        }
+    });
+}
+
 export function postLoan (loan) {
     return axios.post(`${url}/loans/`, loan, {
         headers: {
