@@ -47,7 +47,7 @@ const Bibliotheque = () => {
     }
   
     getAllBooks();
-  }, []);
+  }, [user]);
 
   // Filter by search
   useEffect(() => {

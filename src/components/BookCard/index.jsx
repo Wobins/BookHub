@@ -90,7 +90,7 @@ const BookCard = ({ book, showOptions, user }) => {
                                     <Button variant="info" onClick={handleLoan}>
                                         Preter
                                     </Button>
-                                    <Button variant="danger">Supprimer</Button>
+                                    {/* <Button variant="danger">Supprimer</Button> */}
                                 </ButtonToolbar>
                             )
                         }

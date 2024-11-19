@@ -5,6 +5,7 @@ import { Container, Button, Row, Col, Form, Card, ButtonToolbar, Modal } from 'r
 import { getLoans, updateLoan } from '../../api/loans';
 import { getBooks } from '../../api/book';
 import bookCover from '../../assets/book-cover.png';
+import axios from 'axios';
 
 const Prets = () => {
   const [loansData, setLoans] = useState([]);
@@ -17,31 +18,30 @@ const Prets = () => {
     sub: ''
   });
   const [show, setShow] = useState(false);
-  const [loan, setLoan] = useState({
-    id: "96cc000c-0b15-46e1-9b51-86d31c4be170",
-    // book_id: 1,
-    // borrower_email: "malcom@mail.com",
-    // created_at: "2024-11-19T13:44:33.757396",
-    // owner_email: "angleazaly@hotmail.com",
-    // returned_at: "2024-09-23",
-    // status: "en cours de pret",
-    // updated_at: "2024-11-19T13:44:33.757414"
-   });
+  const [loan, setLoan] = useState(null);
 
   const today1 = new Date();
   const today = today1.toISOString().split('T')[0]
   
   const handleClose = () => {
     setShow(false);
-    setLoan({
-      id: ""
-    });
+    setLoan(null);
   }
   const handleShow = () => setShow(true);
 
-  const handleConfirm = async(loan) => {
+  const handleConfirm = async() => {
     try{
-      const res = await updateLoan(loan.id, loan);
+      // const data = {...loan, }
+
+      // const res = await updateLoan(loan.id, loan);
+      // console.log(loan.id)
+      axios.patch(`https://wp4dxp6doc.execute-api.us-east-1.amazonaws.com/dev/loans/${loan.id}`, loan)
+        .then(response => {
+          console.log('Réponse:', response.data);
+        })
+        .catch(error => {
+          console.error('Erreur:', error);
+        });
       handleClose();
     } catch(e) {
       console.log(e);
@@ -106,7 +106,6 @@ const Prets = () => {
       const loansFromAPI = await fetchLoans();
 
       const booksFilter = booksFromAPI.filter(el => el.owner_email === user.email);
-      const loansFilter = loansFromAPI.filter(el => el.owner_email === user.email);
 
       const booksSearch = booksFilter.filter(el => el.title.toLowerCase().includes(search.toLowerCase()) || el.author.toLowerCase().includes(search.toLowerCase()) || el.isbn.toLowerCase().includes(search.toLowerCase()));
 
@@ -139,38 +138,74 @@ const Prets = () => {
       <Row>
         <Col lg={{span: 8, offset: 2}} md={{span: 6, offset:3}}>
           {
-            loansData.map((loan, index) => (     
-              booksData.filter(el => el.id === loan.book_id).map((book, index) => (
-                <Card className={`mb-3 ${loan.returned_date > today ? 'border border-4 border-success' : 'border border-4 border-danger'}`} key={index}>
-                  <Card.Body>
-                    <Row>
-                      <Col lg={{span: 4}} md={{span: 6}}>
-                        <img src={bookCover} alt="book cover" className='img-fluid' />
-                      </Col>
-                      <Col lg={{span: 8}}>
-                        <Card.Title>{book.title}</Card.Title>
-                        <Card.Subtitle className="mb-2 text-muted">
-                          Auteur(s): {book.author}
-                        </Card.Subtitle>
-                        <Card.Subtitle className="mb-2 text-muted">
-                          ISBN: {book.isbn}
-                        </Card.Subtitle>
-                        <Card.Subtitle className="mb-2 text-muted">
-                          Bénéficiaire: {loan.borrower_email}
-                        </Card.Subtitle>
-                        <Card.Subtitle className="mb-2 text-muted">
-                          Date de retour: {loan.returned_date}
-                        </Card.Subtitle>                       
-                        <ButtonToolbar className="justify-content-end">
-                          <Button variant="success" onClick={loan =>  handleClick(loan)}>
-                            Retourner
-                          </Button>
-                        </ButtonToolbar>
-                      </Col>
-                    </Row>
-                  </Card.Body>
-                </Card>             
-              ))
+            loansData.map((loan, index) => (  
+              loan.status === "Not returned" ? (
+                booksData.filter(el => el.id === loan.book_id).map((book, index) => (
+                  <Card className={`mb-3 ${loan.returned_date > today ? 'border border-4 border-success' : 'border border-4 border-danger'}`} key={index}>
+                    <Card.Body>
+                      <Row>
+                        <Col lg={{span: 4}} md={{span: 6}}>
+                          <img src={bookCover} alt="book cover" className='img-fluid' />
+                        </Col>
+                        <Col lg={{span: 8}}>
+                          <Card.Title>{book.title}</Card.Title>
+                          <Card.Subtitle className="mb-2 text-muted">
+                            Auteur(s): {book.author}
+                          </Card.Subtitle>
+                          <Card.Subtitle className="mb-2 text-muted">
+                            ISBN: {book.isbn}
+                          </Card.Subtitle>
+                          <Card.Subtitle className="mb-2 text-muted">
+                            Bénéficiaire: {loan.borrower_email}
+                          </Card.Subtitle>
+                          <Card.Subtitle className="mb-2 text-muted">
+                            Date de retour: {loan.returned_date}
+                          </Card.Subtitle>                       
+                          <ButtonToolbar className="justify-content-end">
+                            <Button variant="success" onClick={e => handleClick(loan)}>
+                              Retourner
+                            </Button>
+                          </ButtonToolbar>
+                        </Col>
+                      </Row>
+                    </Card.Body>
+                  </Card>             
+                ))
+
+              ) : (
+                booksData.filter(el => el.id === loan.book_id).map((book, index) => (
+                  <Card className={`mb-3`} key={index}>
+                    <Card.Body>
+                      <Row>
+                        <Col lg={{span: 4}} md={{span: 6}}>
+                          <img src={bookCover} alt="book cover" className='img-fluid' />
+                        </Col>
+                        <Col lg={{span: 8}}>
+                          <Card.Title>{book.title}</Card.Title>
+                          <Card.Subtitle className="mb-2 text-muted">
+                            Auteur(s): {book.author}
+                          </Card.Subtitle>
+                          <Card.Subtitle className="mb-2 text-muted">
+                            ISBN: {book.isbn}
+                          </Card.Subtitle>
+                          <Card.Subtitle className="mb-2 text-muted">
+                            Bénéficiaire: {loan.borrower_email}
+                          </Card.Subtitle>
+                          <Card.Subtitle className="mb-2 text-muted">
+                            Date de retour: {loan.returned_date}
+                          </Card.Subtitle>                       
+                          <ButtonToolbar className="justify-content-end">
+                            <Button variant="success" onClick={e => handleClick(loan)}>
+                              Retourner
+                            </Button>
+                          </ButtonToolbar>
+                        </Col>
+                      </Row>
+                    </Card.Body>
+                  </Card>             
+                ))
+                
+              )  
             ))
           }
         </Col>

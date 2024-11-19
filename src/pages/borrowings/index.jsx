@@ -36,7 +36,6 @@ const Borrowings = () => {
   const fetchLoans = async () => {
     const res = await getLoans();
     const data = res.data.body;
-    console.log(data);
     return data;
   }
 
@@ -79,7 +78,6 @@ const Borrowings = () => {
       // const loansSearch = loansFilter.filter(el => el.borrower_email.toLowerCase().includes(search.toLowerCase()));
 
       setBooks(booksSearch);
-      // setLoans(loansSearch);
     }
 
     getSearch();
@@ -87,7 +85,7 @@ const Borrowings = () => {
 
   return (
     <Container>
-      <Row>
+      {/* <Row>
         <Col lg={{span: 8, offset: 2}} md={{span: 6, offset:3}} className='mb-4'>
           <Form inline="true">
             <Row>
@@ -103,38 +101,69 @@ const Borrowings = () => {
             </Row>
           </Form>
         </Col>
-      </Row>
+      </Row> */}
 
       <Row>
         <Col lg={{span: 8, offset: 2}} md={{span: 6, offset:3}}>
-          {
-            loansData.map((loan, index) => (     
-              booksData.filter(el => el.id === loan.book_id).map((book, index) => (
-                <Card className={`mb-3 ${loan.returned_at > today ? 'border border-4 border-success' : 'border border-4 border-danger'}`} key={index}>
-                  <Card.Body>
-                    <Row>
-                      <Col lg={{span: 4}} md={{span: 6}}>
-                        <img src={bookCover} alt="book cover" className='img-fluid' />
-                      </Col>
-                      <Col lg={{span: 8}}>
-                        <Card.Title>{book.title}</Card.Title>
-                        <Card.Subtitle className="mb-2 text-muted">
-                          Auteur(s): {book.author}
-                        </Card.Subtitle>
-                        <Card.Subtitle className="mb-2 text-muted">
-                          ISBN: {book.isbn}
-                        </Card.Subtitle>
-                        <Card.Subtitle className="mb-2 text-muted">
-                          Propriétaire: {loan.borrower_email}
-                        </Card.Subtitle>
-                        <Card.Subtitle className="mb-2 text-muted">
-                          Date de retour: {loan.returned_at}
-                        </Card.Subtitle>   
-                      </Col>
-                    </Row>
-                  </Card.Body>
-                </Card>             
-              ))
+        {
+            loansData.map((loan, index) => (  
+              loan.status === "Not returned" ? (
+                booksData.filter(el => el.id === loan.book_id).map((book, index) => (
+                  <Card className={`mb-3 ${loan.returned_date > today ? 'border border-4 border-success' : 'border border-4 border-danger'}`} key={index}>
+                    <Card.Body>
+                      <Row>
+                        <Col lg={{span: 4}} md={{span: 6}}>
+                          <img src={bookCover} alt="book cover" className='img-fluid' />
+                        </Col>
+                        <Col lg={{span: 8}}>
+                          <Card.Title>{book.title}</Card.Title>
+                          <Card.Subtitle className="mb-2 text-muted">
+                            Auteur(s): {book.author}
+                          </Card.Subtitle>
+                          <Card.Subtitle className="mb-2 text-muted">
+                            ISBN: {book.isbn}
+                          </Card.Subtitle>
+                          <Card.Subtitle className="mb-2 text-muted">
+                            Propriétaire: {loan.borrower_email}
+                          </Card.Subtitle>
+                          <Card.Subtitle className="mb-2 text-muted">
+                            Date de retour: {loan.returned_date}
+                          </Card.Subtitle>   
+                        </Col>
+                      </Row>
+                    </Card.Body>
+                  </Card>             
+                ))
+
+              ) : (
+                booksData.filter(el => el.id === loan.book_id).map((book, index) => (
+                  <Card className={`mb-3`} key={index}>
+                    <Card.Body>
+                      <Row>
+                        <Col lg={{span: 4}} md={{span: 6}}>
+                          <img src={bookCover} alt="book cover" className='img-fluid' />
+                        </Col>
+                        <Col lg={{span: 8}}>
+                          <Card.Title>{book.title}</Card.Title>
+                          <Card.Subtitle className="mb-2 text-muted">
+                            Auteur(s): {book.author}
+                          </Card.Subtitle>
+                          <Card.Subtitle className="mb-2 text-muted">
+                            ISBN: {book.isbn}
+                          </Card.Subtitle>
+                          <Card.Subtitle className="mb-2 text-muted">
+                            Propriétaire: {loan.owner_email}
+                          </Card.Subtitle>
+                          <Card.Subtitle className="mb-2 text-muted">
+                            Date de retour: {loan.returned_date}
+                          </Card.Subtitle>      
+                        </Col>
+                      </Row>
+                    </Card.Body>
+                  </Card>             
+                ))
+                
+              )  
             ))
           }
         </Col>
