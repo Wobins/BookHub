@@ -2,7 +2,7 @@
 
 Ce projet illustre la mise en œuvre d'une architecture basée sur des microservices pour une application de gestion de prêts de livres. Cette application met en avant la flexibilité des microservices grâce à l'utilisation de deux technologies distinctes : **Node.js** et **Python**, ainsi que deux bases de données différentes : **Amazon RDS** et **DynamoDB**.
 
-## Table des matières
+## Auteurs
 1. Ange Wobinwo
 2. Malcom Bergot
 
